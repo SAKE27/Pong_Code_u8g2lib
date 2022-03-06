@@ -1,15 +1,21 @@
+//This library includes files for the Arduino SDK
 #include <Arduino.h>
+//This library is to control the OLED display, it manages to understand if the SSD1306 is either 128x64 or 128x32
 #include <U8g2lib.h>
 
+
 #ifdef U8X8_HAVE_HW_SPI
+//This library allows you to communicate with SPI(Serial Peripheral Interface) devices, with the Arduino as the master device
 #include <SPI.h>
 #endif
 #ifdef U8X8_HAVE_HW_I2C
+//This library allows you to communicate with I2C / TWI devices
 #include <Wire.h>
 #endif
 
 #define USED_PINS_COUNT 4
 
+//variables
 int start_pin = 38;
 int start = 0;
 int player_height = 16;
@@ -34,6 +40,11 @@ int pin_states[14];
 const int USED_PINS[USED_PINS_COUNT] = {34,37};
 
 #pragma once
+
+//not working
+/*
+
+//drawing of the main screen using a bitmapper
 
 const byte bitmap_56wpo[1024] PROGMEM = {
   B00000110,B00000001,B00000011,B10111111,B11111111,B11111111,B11111111,B11111111,B11111111,B11111111,B11111111,B11111111,B11100100,B00001000,B00000010,B00000000,
@@ -101,16 +112,21 @@ const byte bitmap_56wpo[1024] PROGMEM = {
   B00000000,B00000000,B00000101,B00111111,B11111101,B11111111,B11111111,B11111111,B11111111,B11111111,B11111111,B11111111,B11101001,B01000001,B10100100,B01000000,
   B00000100,B00001000,B00000101,B00011111,B11111111,B11111111,B11111111,B11111111,B11111111,B11111111,B11111111,B11111111,B11101011,B11000000,B00000000,B00000000
 };
-
+*/
 U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, 16, 15, 4);
 // End of constructor list
 
+/*
+//subfunction for the title screen
 void pong_mainscreen(){
   u8g2.clearBuffer();
   u8g2.drawXBMP(0,0, 128,64, bitmap_56wpo);
   u8g2.sendBuffer();
   delay(10);
 }
+*/
+
+//sets the display
 void u8g2_prepare(void) {
   u8g2.setFont(u8g2_font_6x10_tf);
   u8g2.setFontRefHeightExtendedText();
@@ -119,16 +135,20 @@ void u8g2_prepare(void) {
   u8g2.setFontDirection(0);
 }
 
+//
 void u8g2_str(int x,int y, String string)
 {
   u8g2.setFont(u8g2_font_6x10_tr);
   u8g2.setCursor(x,y);
   u8g2.print(string);
 }
+
 void setup(void) {
   Serial.begin(9600);
+  //X axis player 1
   pinMode(34, INPUT);
   //pinMode(38, INPUT);
+  //X axis player 2
   pinMode(37, INPUT);
   pinMode(start_pin, INPUT);
   //pinMode(39, INPUT);
@@ -146,6 +166,8 @@ void pongDisplayScore(int score0, int score1)
   //u8g2_str(64, 35, String(player1_pos + player_height /2));
 }
 //serial print debugging
+
+//reads analog value
 int pongReadPin(int pin)
 {
   if(analogRead(pin) > 1900)
@@ -166,6 +188,8 @@ int pongReadPin(int pin)
     return -1;
   }
 }
+
+//resets ball to centre after point
 void pongNewRound()
 {
   ball_x = 64;
@@ -174,6 +198,7 @@ void pongNewRound()
   player1_pos = 32;
 }
 
+//reads return value and changes the players position
 void pongMainCycle(void)
 {
   int X_player0 = analogRead(34);
@@ -235,6 +260,7 @@ void pongMainCycle(void)
   u8g2.drawHLine(0, player1_pos, 128);
   u8g2.drawHLine(0, player1_pos +player_height, 128);*/
   
+  //reads collision with  the player and changes the ball direction and speed
   if (ball_x >= (128 - ball_radius - player_width))
   {
     if(player1_pos <= ball_y and ball_y <= player1_pos + player_height)
@@ -269,13 +295,16 @@ void pongMainCycle(void)
   pongDisplayScore(player0_score, player1_score);
 }
 
+
 void loop(void) {
+  /*
   pong_mainscreen();
   while(start == 0){
     start = digitalRead(start_pin);
     Serial.println(start);
   }
   start = 1;
+  */
   u8g2_prepare();
   u8g2.clearBuffer();
   pongMainCycle();
