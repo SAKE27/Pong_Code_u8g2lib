@@ -18,20 +18,20 @@
 //variables
 int start_pin = 38;
 int start = 0;
-int player_height = 16;
-int player_width = 2;
+int player_height = 16;  //height of players
+int player_width = 2;  //width of players
 
-int player0_pos = 32;
-int player0_score = 0;
+int player0_pos = 32;  //initial position of player0
+int player0_score = 0;  //initial score of player0
 
-int player1_pos = 32;
-int player1_score = 0;
+int player1_pos = 32;  //initial position of player1
+int player1_score = 0;  //initial score of player1
 
-float ball_x = 64;
-float ball_y = 32;
-float ball_x_vel = 1;
-float ball_y_vel = 2;
-int ball_radius = 2;
+float ball_x = 64;  //sets the starting position of the ball
+float ball_y = 32;  //sets the starting position of the ball
+float ball_x_vel = 1;  //sets the starting speed of the ball
+float ball_y_vel = 2;  //sets the starting speed of the ball
+int ball_radius = 2;  //sets the radius of the ball
 int ball_threshold = 2; //specifies, how many pixels the ball will have to move off-screen for a goal to be counted
 
 int pin_states[14];
@@ -135,7 +135,7 @@ void u8g2_prepare(void) {
   u8g2.setFontDirection(0);
 }
 
-//
+//sets the font and position of the text to display
 void u8g2_str(int x,int y, String string)
 {
   u8g2.setFont(u8g2_font_6x10_tr);
@@ -143,6 +143,7 @@ void u8g2_str(int x,int y, String string)
   u8g2.print(string);
 }
 
+//declares inputs, outputs and initializes the serial monitor
 void setup(void) {
   Serial.begin(9600);
   //X axis player 1
@@ -155,6 +156,7 @@ void setup(void) {
   u8g2.begin();
 }
 
+//function to display the scores of the players
 void pongDisplayScore(int score0, int score1)
 {
   u8g2_str(32, 5, String(score0));
@@ -165,7 +167,6 @@ void pongDisplayScore(int score0, int score1)
   //u8g2_str(64, 25, String(player1_pos - player_height/2));
   //u8g2_str(64, 35, String(player1_pos + player_height /2));
 }
-//serial print debugging
 
 //reads analog value
 int pongReadPin(int pin)
@@ -251,7 +252,7 @@ void pongMainCycle(void)
   if (ball_x >= 128 + ball_threshold){player0_score++; pongNewRound();}
   if (ball_x <= 0 - ball_threshold){player1_score++; pongNewRound();}
 
-  //ball_collision
+  //ball collision
   if (ball_y >= 63 - ball_radius){ball_y_vel = -1.0;}
   if (ball_y <= 0 + ball_radius){ball_y_vel = 1.0;}
 
@@ -289,9 +290,10 @@ void pongMainCycle(void)
   //draw player0
   u8g2.drawBox(0, player0_pos, player_width, player_height);
 
-  //draw player0
+  //draw player1
   u8g2.drawBox(128-player_width, player1_pos, player_width, player_height);
   
+  //draw scores
   pongDisplayScore(player0_score, player1_score);
 }
 
@@ -305,9 +307,9 @@ void loop(void) {
   }
   start = 1;
   */
-  u8g2_prepare();
-  u8g2.clearBuffer();
-  pongMainCycle();
-  u8g2.sendBuffer();
+  u8g2_prepare();   //sets up the screen
+  u8g2.clearBuffer();   //cleans the screen content that was previously displayed
+  pongMainCycle();  //reads the inputs and draws the content to display
+  u8g2.sendBuffer();  //sends the content to the display
   delay(1);
  }
